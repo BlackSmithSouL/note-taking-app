@@ -1,31 +1,60 @@
+import { FormEvent, useRef, useState } from "react"
 import { Col, Form, Row, Stack, Button } from "react-bootstrap"
+import { Link } from "react-router-dom"
 import CreatebleReactSelect from "react-select/creatable"
+import { NoteData, Tag } from "./App"
 
-export const NoteForm = () => {
+type NoteFormProps = {
+    onSubmit: (data: NoteData) => void
+}
+
+export const NoteForm = ({ onSubmit }: NoteFormProps) => {
+    const titleRef = useRef<HTMLInputElement>(null)
+    const markdownRef = useRef<HTMLTextAreaElement>(null)
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault()
+
+        onSubmit({
+            title: titleRef.current!.value,
+            markdown: markdownRef.current!.value,
+            tags: [],
+        })
+    }
+
     return (
-        <Form>
+        <Form onSubmit={handleSubmit}>
             <Stack gap={4}>
                 <Row>
                     <Col>
                     <Form.Group controlId="title">
                         <Form.Label>Title</Form.Label>
-                        <Form.Control required />
+                        <Form.Control ref={titleRef}required />
                     </Form.Group>
                     </Col>
                     <Col>
                     <Form.Group controlId="title">
                         <Form.Label>Tags</Form.Label>
-                        <CreatebleReactSelect isMulti />
+                        <CreatebleReactSelect value={selectedTags.map(tag => {
+                            return { label: tag.label, value: tag.id }
+                        })} isMulti />
                     </Form.Group>
                     </Col>
                 </Row>
                     <Form.Group controlId="markdown">
                         <Form.Label>Body</Form.Label>
-                        <Form.Control required as="textarea" rows={15} />
+                        <Form.Control required as="textarea" ref={markdownRef} rows={15} />
                     </Form.Group>
                 <Stack direction="horizontal" gap={2} className="justify-content-end">
-                    <Button type="submit" variant="primary">Save</Button>
-                    <Button type="button" variant="outline-secondary">Cancel</Button>
+                    <Button type="submit" variant="primary">
+                        Save
+                    </Button>
+                    <Link to="..">
+                        <Button type="button" variant="outline-secondary">
+                        Cancel
+                        </Button>
+                    </Link>
                 </Stack>
             </Stack>
         </Form>
