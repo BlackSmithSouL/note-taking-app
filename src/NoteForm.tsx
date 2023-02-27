@@ -49,7 +49,7 @@ export const NoteForm = ({ onSubmit, onAddTag, availableTags }: NoteFormProps) =
                             }}
                             value={selectedTags.map(tag => {
                             return { label: tag.label, value: tag.id }
-                        })} 
+                            })} 
                         options={availableTags.map(tag => {
                             return { label: tag.label, value: tag.id}
                         })}
