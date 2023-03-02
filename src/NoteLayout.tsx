@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useParams } from "react-router-dom"
+import { Navigate, Outlet, useOutlet, useOutletContext, useParams } from "react-router-dom"
 import { Note } from "./App"
 
 type NoteLayoutProps = {
@@ -12,4 +12,8 @@ export const NoteLayout = ({ notes }: NoteLayoutProps) => {
     if (note == null) return <Navigate to="/" replace />
 
     return <Outlet context={note} />
+}
+
+export const useNote = () => {
+    return useOutletContext<Note>()
 }
