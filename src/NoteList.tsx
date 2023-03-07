@@ -14,15 +14,19 @@ type SimplifieNote = {
 type NoteListProps = {
     availableTags: Tag[]
     notes: SimplifieNote[]
+    onDeleteTag: (id: string) => void
+    onUpdateTag: (id: string, label: string) => void
 }
 
 type EditTagsModalProps = {
     show: boolean
     availableTags: Tag[]
     handleClose: () => void
+    onDeleteTag: (id: string) => void
+    onUpdateTag: (id: string, label: string) => void
 }
 
-export const NoteList = ({ availableTags, notes}: NoteListProps) => {
+export const NoteList = ({ availableTags, notes, onUpdateTag, onDeleteTag}: NoteListProps) => {
     const [selectedTags, setSelectedTags] = useState<Tag[]>([])
     const [title, setTitle] = useState("")
     const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false)
@@ -44,7 +48,9 @@ export const NoteList = ({ availableTags, notes}: NoteListProps) => {
                         <Button variant="primary">Create
                         </Button>
                     </Link>
-                        <Button variant="outline-secondary">Edit Tags
+                        <Button 
+                            onClick={() => setEditTagsModalIsOpen(true)}
+                            variant="outline-secondary">Edit Tags
                         </Button>
                 </Stack>
             </Col>
@@ -85,7 +91,13 @@ export const NoteList = ({ availableTags, notes}: NoteListProps) => {
                 </Col>
             ))}
         </Row>
-        <EditTagsModal show={editTagsModalIsOpen} handleClose={() => setEditTagsModalIsOpen(false)} availableTags={availableTags}/>
+        <EditTagsModal 
+            show={editTagsModalIsOpen} 
+            handleClose={() => setEditTagsModalIsOpen(false)} 
+            availableTags={availableTags}
+            onUpdateTag={onUpdateTag}
+            onDeleteTag={onDeleteTag}
+        />
     </>
 }
 
@@ -110,7 +122,13 @@ const NoteCard = ({ id, title, tags}: SimplifieNote) => {
     </Card>
 }
 
-const EditTagsModal = ({ availableTags, handleClose, show }: EditTagsModalProps) => {
+const EditTagsModal = ({ 
+    availableTags, 
+    handleClose, 
+    show,
+    onUpdateTag,
+    onDeleteTag
+}: EditTagsModalProps) => {
     return <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
             <Modal.Title>Edit Tags</Modal.Title>
@@ -121,10 +139,15 @@ const EditTagsModal = ({ availableTags, handleClose, show }: EditTagsModalProps)
                     {availableTags.map(tag => (
                         <Row key={tag.id}>
                             <Col>
-                            <Form.Control type="text" value={tag.label} />
+                            <Form.Control
+                            type="text" 
+                            value={tag.label} onChange={e => onUpdateTag(tag.id, e.target.value)}
+                            />
                             </Col>
                             <Col xs="auto">
-                                <Button variant="outline-danger">&times;</Button>
+                                <Button 
+                                onClick={() => onDeleteTag(tag.id)}
+                                variant="outline-danger">&times;</Button>
                             </Col>
                         </Row>
                     ))}
